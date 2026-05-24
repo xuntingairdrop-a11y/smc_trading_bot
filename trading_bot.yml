@@ -1,0 +1,32 @@
+name: Crypto Trading Bot Job
+
+# ဘယ်အချိန်မှာ အလုပ်လုပ်မလဲ သတ်မှတ်ခြင်း
+on:
+  schedule:
+    - cron: '0 * * * *' # အချိန်တိုင်းရဲ့ မိနစ် 0 မှာ (၁ နာရီတစ်ခါ) အလိုအလျောက် Run မယ်
+  workflow_dispatch:     # အရေးပေါ်ဖြစ်ရင် GitHub UI ထဲကနေ လက်နဲ့ နှိပ်ပြီး Run လို့လည်းရအောင် လုပ်တာပါ
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/積極/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Libraries
+      run: |
+        pip install pandas numpy ccxt stable-baselines3
+
+    - name: Run Trading Bot
+      env:
+        # API Keys တွေကို GitHub Secrets ထဲမှာ သိမ်းထားပြီး ဒီလို လှမ်းခေါ်သုံးရပါတယ်
+        BYBIT_API_KEY: ${{ secrets.BYBIT_API_KEY }}
+        BYBIT_SECRET: ${{ secrets.BYBIT_SECRET }}
+      run: python my_trading_script.py
+      
